@@ -15,4 +15,7 @@ router.post('/pages', Controller.createPage);
 // Create a new PageContent inside a Page
 router.post('/pages/:id/page-contents', Controller.createPageContent);
 
+// Create a new SupportSource inside a PageContent
+router.post('/pages/:id/page-contents/:pid', Controller.createSupportSource);
+
 module.exports = router;

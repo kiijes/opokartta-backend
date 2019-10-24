@@ -9,13 +9,8 @@ const { PageModel, PageContentModel, SupportSourceModel }
 // Get and return all the Page documents.
 exports.getAllPages = (req, res) => {
     PageModel.find()
-        .then(doc => {
-            return res.status(200).send(doc);
-        }).catch(err => {
-            return res.status(500).send({
-                message: err.message
-            });
-        });
+        .then(doc => res.status(200).send(doc))
+        .catch(err => res.status(500).send({message: err.message}));
 };
 
 /**
@@ -43,23 +38,20 @@ exports.createPage = async (req, res) => {
     // Create a new Page document from the model.
     let page = new PageModel({
         pageName: req.body.pageName,
-        pageContent: [],
-        orderNumber: count !== undefined ? count : 1
+        pageContent: !req.body.pageContent ? [] : req.body.pageContent,
+        orderNumber: count ? count : 1
     });
 
     // Save the new document.
     page.save()
-        .then(doc => {
-            return res.status(200).send(doc);
-        }).catch(err => {
-            return res.status(500).send({
-                message: err.message || "Some error occurred when saving data"
-            });
-        });
+        .then(doc => res.status(200).send(doc))
+        .catch(err => res.status(500)
+            .send({message: err.message || "Some error occurred when saving data"})
+        );
 }
 
 /**
- * Create a new PageContent document inside a Page document.
+ * Create a new PageContent document into a Page document.
  * The request body should be JSON and have a "name" field.
  * The request parameter needs to be the ObjectID of the parent
  * document.
@@ -75,14 +67,13 @@ exports.createPageContent = async (req, res) => {
     }
 
     let pageDoc;
-    await PageModel.findById(req.params.id)
-        .then(doc => {
-            pageDoc = doc;
-        }).catch(err => {
-            return res.status(500).send({
-                message: err.message
-            });
+    try {
+        pageDoc = await getPageQuery(req.params.id).exec();
+    } catch (e) {
+        return res.status(500).send({
+            message: e.message
         });
+    }
 
     let count = pageDoc.pageContent.length + 1;
 
@@ -94,12 +85,83 @@ exports.createPageContent = async (req, res) => {
 
     pageDoc.pageContent.push(pageContent);
     pageDoc.save()
-        .then(doc => {
-            return res.status(200).send(doc);
-        }).catch(err => {
-            return res.status(500).send({
-                message: err.message || "Some error occurred when saving data"
-            });
-        });
+        .then(doc => res.status(200).send(doc))
+        .catch(err => res.status(500)
+            .send({ message: err.message || "Some error occurred when saving data" })
+        );
 
+}
+
+/**
+ * Create a new SupportSource document into a PageContent document.
+ * The request body should be JSON and have at least a "sourceName" field.
+ * req.params.id is the ID of the Page document.
+ * req.params.pid is the ID of the PageContent document.
+ */
+exports.createSupportSource = async (req, res) => {
+    if (
+        req.body.sourceName === undefined ||
+        req.params.id === undefined ||
+        req.params.pid === undefined
+    ) {
+        return res.status(400).send({
+            message: "Request body needs field 'sourceName'."
+        });
+    }
+
+    let error;
+    let pageDoc;
+    try {
+        pageDoc = await getPageQuery(req.params.id).exec();
+    } catch (e) {
+        return res.status(500).send({
+            message: e.message
+        });
+    }
+    
+    console.log(pageDoc);
+
+    if (error !== undefined) {
+        return res.status(500).send(error.message);
+    }
+
+    let pageContentIsFound = false;
+    pageDoc.pageContent.forEach(pageContent => {
+        console.log(`Comparing ${pageContent._id} to ${req.params.pid}`);
+        console.log(`Typeof _id is: ${typeof pageContent._id}, typeof pid is: ${typeof req.params.pid}`);
+        console.log(pageContent._id === req.params.pid);
+        if (pageContent._id == req.params.pid) {
+            pageContentIsFound = true;
+            let count = pageContent.supportSources.length + 1;
+
+            let supportSource = new SupportSourceModel({
+                sourceName: req.body.sourceName,
+                link: req.body.link ? req.body.link : null,
+                isOnline: req.body.isOnline,
+                isInPerson: req.body.isInPerson,
+                isInBuilding: req.body.isInBuilding,
+                orderNumber: count !== undefined ? count : 1
+            });
+
+            pageContent.supportSources.push(supportSource);
+        }
+    });
+
+    if (!pageContentIsFound) {
+        return res.status(404).send({
+            message: 'Could not find pageDocument with ID ' + req.params.pid
+        });
+    }
+
+    pageDoc.save()
+        .then(doc => res.status(200).send(doc))
+        .catch(err => res.status(500)
+            .send({ message: err.message || "Some error occurred when saving data" })
+        );
+
+}
+
+function getPageQuery(id) {
+    let query = PageModel.findById(id);
+    return query;
 }
