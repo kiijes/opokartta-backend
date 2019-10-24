@@ -1,3 +1,8 @@
+/**
+ * This file turns the Mongoose schemas into usable models
+ * and exports them.
+ */
+
 const mongoose = require('mongoose');
 const SupportSourceSchema = require('./SupportSource');
 const PageContentSchema = require('./PageContent');

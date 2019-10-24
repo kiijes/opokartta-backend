@@ -1,3 +1,7 @@
+/**
+ * Main file of the application, sets up the application server.
+ */
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const crud = require('./routes/crud.routes');
