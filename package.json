@@ -1,0 +1,18 @@
+{
+  "name": "opokartta-backend",
+  "version": "1.0.0",
+  "description": "Backend opokarttasovellukseen",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "backend",
+    "mongodb",
+    "express",
+    "mongoose",
+    "crud"
+  ],
+  "author": "Jesse Kiilamaa",
+  "license": "ISC"
+}
