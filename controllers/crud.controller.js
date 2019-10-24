@@ -109,7 +109,6 @@ exports.createSupportSource = async (req, res) => {
         });
     }
 
-    let error;
     let pageDoc;
     try {
         pageDoc = await getPageQuery(req.params.id).exec();
@@ -118,17 +117,9 @@ exports.createSupportSource = async (req, res) => {
             message: e.message
         });
     }
-    
-    console.log(pageDoc);
-
-    if (error !== undefined) {
-        return res.status(500).send(error.message);
-    }
 
     let pageContentIsFound = false;
     pageDoc.pageContent.forEach(pageContent => {
-        console.log(`Comparing ${pageContent._id} to ${req.params.pid}`);
-        console.log(`Typeof _id is: ${typeof pageContent._id}, typeof pid is: ${typeof req.params.pid}`);
         console.log(pageContent._id === req.params.pid);
         if (pageContent._id == req.params.pid) {
             pageContentIsFound = true;
