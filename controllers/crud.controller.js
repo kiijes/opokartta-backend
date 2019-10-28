@@ -51,6 +51,23 @@ exports.createPage = async (req, res) => {
 }
 
 /**
+ * Delete a Page with the id defined in the route parameter 'id'.
+ */
+exports.deletePage = (req, res) => {
+    PageModel.findByIdAndDelete(req.params.id, (err, doc) => {
+        if (err || !doc) {
+            return res.status(500).send({
+                message: err ? err.message : 'No document found'
+            });
+        }
+
+        return res.status(200).send({
+            message: 'Page id ' + req.params.id + ' deleted'
+        });
+    });
+}
+
+/**
  * Create a new PageContent document into a Page document.
  * The request body should be JSON and have a "name" field.
  * The request parameter needs to be the ObjectID of the parent
