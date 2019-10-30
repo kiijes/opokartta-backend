@@ -24,22 +24,10 @@ exports.createPage = async (req, res) => {
         });
     }
 
-    // Set the order number depending on the number of existing documents.
-    let count;
-    await PageModel.estimatedDocumentCount((err, docCount) => {
-        if (err) {
-            return res.status(500).send({
-                message: err.message
-            });
-        }
-        count = docCount + 1;
-    });
-
     // Create a new Page document from the model.
     let page = new PageModel({
         pageName: req.body.pageName,
-        pageContent: !req.body.pageContent ? [] : req.body.pageContent,
-        orderNumber: count ? count : 1
+        pageContent: !req.body.pageContent ? [] : req.body.pageContent
     });
 
     // Save the new document.
@@ -83,29 +71,76 @@ exports.createPageContent = async (req, res) => {
         });
     }
 
-    let pageDoc;
-    try {
-        pageDoc = await getPageQuery(req.params.id).exec();
-    } catch (e) {
-        return res.status(500).send({
-            message: e.message
+    await getPageQuery(req.params.id).exec((err, doc) => {
+
+        if (err || !doc) {
+            return res.status(500).send({
+                message: err ? err.message : 'Could not find Page found with ID ' + req.params.id
+            });
+        }
+
+        let pageContent = new PageContentModel({
+            name: req.body.name,
+            supportSources: []
         });
-    }
 
-    let count = pageDoc.pageContent.length + 1;
+        doc.pageContent.push(pageContent);
 
-    let pageContent = new PageContentModel({
-        name: req.body.name,
-        supportSources: [],
-        orderNumber: count !== undefined ? count : 1
+        doc.save((err, doc) => {
+            if (err) res.status(500).send({ message: err.message });
+            res.status(200).send(doc);
+        });
     });
 
-    pageDoc.pageContent.push(pageContent);
-    pageDoc.save()
-        .then(doc => res.status(200).send(doc))
-        .catch(err => res.status(500)
-            .send({ message: err.message || "Some error occurred when saving data" })
-        );
+}
+
+/**
+ * Delete a PageContent document defined by the route parameter pid
+ * inside a Page document defined by the router parameter id.
+ */
+exports.deletePageContent = async (req, res) => {
+    if (
+        req.params.id === undefined || 
+        req.params.pid === undefined
+    ) { 
+        return res.status(400).send({ message: 'Undefined request parameters' });
+    }
+
+    await getPageQuery(req.params.id).exec((err, doc) => {
+
+        if (err || !doc) {
+            return res.status(500).send({
+                message: err ? err.message : 'Could not find Page found with ID ' + req.params.id
+            });
+        }
+        
+        // Boolean variable for checking if anything was deleted
+        let pageContentWasDeleted = false;
+
+        // Find corresponding PageContent document and delete if exists
+        for (let i = 0; i < doc.pageContent.length; i++) {
+            if (doc.pageContent[i]._id == req.params.pid) {
+                doc.pageContent.splice(i, 1);
+                pageContentWasDeleted = true;
+                break;
+            }
+        }
+
+        // If nothing was deleted, return a message
+        if (!pageContentWasDeleted) {
+            return res.status(404).send({
+                message: 'Could not find PageContent with ID ' + req.params.pid
+            });
+        }
+
+        doc.save((err, doc) => {
+            if (err) res.status(500).send({ message: err.message });
+            res.status(200).send(doc);
+        });
+
+
+    });
+
 
 }
 
@@ -126,46 +161,44 @@ exports.createSupportSource = async (req, res) => {
         });
     }
 
-    let pageDoc;
-    try {
-        pageDoc = await getPageQuery(req.params.id).exec();
-    } catch (e) {
-        return res.status(500).send({
-            message: e.message
-        });
-    }
-
-    let pageContentIsFound = false;
-    pageDoc.pageContent.forEach(pageContent => {
-        console.log(pageContent._id === req.params.pid);
-        if (pageContent._id == req.params.pid) {
-            pageContentIsFound = true;
-            let count = pageContent.supportSources.length + 1;
-
-            let supportSource = new SupportSourceModel({
-                sourceName: req.body.sourceName,
-                link: req.body.link ? req.body.link : null,
-                isOnline: req.body.isOnline,
-                isInPerson: req.body.isInPerson,
-                isInBuilding: req.body.isInBuilding,
-                orderNumber: count !== undefined ? count : 1
+    await getPageQuery(req.params.id).exec((err, doc) => {
+        if (err || !doc) {
+            return res.status(500).send({
+                message: err ? err.message : 'Could not find Page found with ID ' + req.params.id
             });
-
-            pageContent.supportSources.push(supportSource);
         }
-    });
 
-    if (!pageContentIsFound) {
-        return res.status(404).send({
-            message: 'Could not find pageDocument with ID ' + req.params.pid
+        let pageContentIsFound = false;
+
+        for (i = 0; i < doc.pageContent.length; i++) {
+            if (doc.pageContent[i]._id == req.params.pid) {
+                pageContentIsFound = true;
+
+                let supportSource = new SupportSourceModel({
+                    sourceName: req.body.sourceName,
+                    link: req.body.link ? req.body.link : null,
+                    isOnline: req.body.isOnline,
+                    isInPerson: req.body.isInPerson,
+                    isInBuilding: req.body.isInBuilding
+                });
+
+                doc.pageContent[i].supportSources.push(supportSource);
+                break;
+            }
+        }
+
+        if (!pageContentIsFound) {
+            return res.status(404).send({
+                message: 'Could not find pageDocument with ID ' + req.params.pid
+            });
+        }
+
+        doc.save((err, doc) => {
+            if (err) res.status(500).send({ message: err.message });
+            res.status(200).send(doc);
         });
-    }
 
-    pageDoc.save()
-        .then(doc => res.status(200).send(doc))
-        .catch(err => res.status(500)
-            .send({ message: err.message || "Some error occurred when saving data" })
-        );
+    });
 
 }
 

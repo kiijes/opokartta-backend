@@ -13,11 +13,7 @@ const PageSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    pageContent: [PageContentSchema],
-    orderNumber: {
-        type: Number,
-        required: true
-    }
+    pageContent: [PageContentSchema]
 });
 
 module.exports = PageSchema;

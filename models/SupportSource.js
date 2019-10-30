@@ -28,10 +28,6 @@ const SupportSourceSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: false
-    },
-    orderNumber: {
-        type: Number,
-        required: true
     }
 });
 

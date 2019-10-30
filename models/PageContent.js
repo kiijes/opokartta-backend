@@ -14,11 +14,7 @@ const PageContentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    supportSources: [SupportSourceSchema],
-    orderNumber: {
-        type: Number,
-        required: true
-    }
+    supportSources: [SupportSourceSchema]
 });
 
 module.exports = PageContentSchema;
