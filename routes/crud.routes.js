@@ -24,4 +24,7 @@ router.delete('/pages/:id', Controller.deletePage);
 // Delete a PageContent
 router.delete('/pages/:id/page-contents/:pid', Controller.deletePageContent);
 
+// Delete a SupportSource
+router.delete('/pages/:id/page-contents/:pid/support-sources/:sid', Controller.deleteSupportSource);
+
 module.exports = router;
