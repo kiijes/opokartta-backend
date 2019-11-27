@@ -2,8 +2,7 @@
  * CRUD operations for Page documents.
  */
 
-const { PageModel, PageContentModel, SupportSourceModel } 
-    = require('../models/Models');
+const { PageModel } = require('../models/Models');
 
 // Get and return all the Page documents.
 exports.getAllPages = (req, res) => {
@@ -16,7 +15,7 @@ exports.getAllPages = (req, res) => {
  * Create a new Page document.
  * The request body should be JSON and have a "pageName" field.
  */
-exports.createPage = async (req, res) => {
+exports.createPage = (req, res) => {
     if (req.body.pageName === undefined) {
         return res.status(400).send({
             message: "Request body needs field 'pageName'."
@@ -26,6 +25,7 @@ exports.createPage = async (req, res) => {
     // Create a new Page document from the model.
     let page = new PageModel({
         pageName: req.body.pageName,
+        subtitle: !req.body.subtitle ? null : req.body.subtitle,
         pageContent: !req.body.pageContent ? [] : req.body.pageContent
     });
 
@@ -65,7 +65,9 @@ exports.modifyPage = (req, res) => {
             });
         }
 
-        doc.pageName = req.body.pageName;
+        doc.pageName = !req.body.pageName ? doc.pageName : req.body.pageName;
+        doc.subtitle = !req.body.subtitle ? 
+            (!doc.subtitle ? null : doc.subtitle) : req.body.subtitle;
         doc.save((err, doc) => {
             if (err) res.status(500).send({ message: err.message });
             res.status(200).send(doc);

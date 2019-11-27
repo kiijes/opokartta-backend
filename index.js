@@ -6,6 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const crud = require('./routes/crud.routes');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/opokartta', {
@@ -20,6 +21,7 @@ mongoose.connect('mongodb://localhost:27017/opokartta', {
 });
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 const port = process.env.PORT || 3000;

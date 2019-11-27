@@ -13,6 +13,7 @@ const PageSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    subtitle: String,
     pageContent: [PageContentSchema]
 });
 

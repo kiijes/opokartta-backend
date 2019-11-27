@@ -2,8 +2,7 @@
  * CRUD operations for SupportSource documents.
  */
 
-const { PageModel, PageContentModel, SupportSourceModel } 
-    = require('../models/Models');
+const { PageModel, SupportSourceModel } = require('../models/Models');
 
 /**
  * Create a new SupportSource document into a PageContent document.
@@ -37,7 +36,9 @@ exports.createSupportSource = (req, res) => {
 
                 let supportSource = new SupportSourceModel({
                     sourceName: req.body.sourceName,
-                    link: req.body.link ? req.body.link : null,
+                    description: req.body.description,
+                    link: req.body.link,
+                    phone: req.body.phone,
                     isOnline: req.body.isOnline,
                     isInPerson: req.body.isInPerson,
                     isInBuilding: req.body.isInBuilding
@@ -139,7 +140,9 @@ exports.modifySupportSource = (req, res) => {
                 for (let j = 0; j < doc.pageContent[i].supportSources.length; j++) {
                     if (doc.pageContent[i].supportSources[j]._id == req.params.sid) {
                         doc.pageContent[i].supportSources[j].sourceName = !req.body.sourceName ? doc.pageContent[i].supportSources[j].sourceName : req.body.sourceName;
+                        doc.pageContent[i].supportSources[j].description = !req.body.description ? doc.pageContent[i].supportSources[j].description : req.body.description;
                         doc.pageContent[i].supportSources[j].link = !req.body.link ? doc.pageContent[i].supportSources[j].link : req.body.link;
+                        doc.pageContent[i].supportSources[j].phone = !req.body.phone ? doc.pageContent[i].supportSources[j].phone : req.body.phone;
                         doc.pageContent[i].supportSources[j].isOnline = !req.body.isOnline ? doc.pageContent[i].supportSources[j].isOnline : req.body.isOnline;
                         doc.pageContent[i].supportSources[j].isInPerson = !req.body.isInPerson ? doc.pageContent[i].supportSources[j].isInPerson : req.body.isInPerson;
                         doc.pageContent[i].supportSources[j].isInBuilding = !req.body.isInBuilding ? doc.pageContent[i].supportSources[j].isInBuilding : req.body.isInBuilding;

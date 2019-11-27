@@ -13,20 +13,19 @@ const SupportSourceSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    description: String,
     link: String,
+    phone: String,
     isOnline: {
         type: Boolean,
-        required: true,
         default: false
     },
     isInPerson: {
         type: Boolean,
-        required: true,
         default: false
     },
     isInBuilding: {
         type: Boolean,
-        required: true,
         default: false
     }
 });
