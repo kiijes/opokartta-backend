@@ -26,7 +26,7 @@ exports.createPageContent = async (req, res) => {
 
         if (err || !doc) {
             return res.status(500).send({
-                message: err ? err.message : 'Could not find Page found with ID ' + req.params.id
+                message: err ? err.message : 'Could not find Page with ID ' + req.params.id
             });
         }
 
@@ -61,7 +61,7 @@ exports.deletePageContent = async (req, res) => {
 
         if (err || !doc) {
             return res.status(500).send({
-                message: err ? err.message : 'Could not find Page found with ID ' + req.params.id
+                message: err ? err.message : 'Could not find Page with ID ' + req.params.id
             });
         }
         
