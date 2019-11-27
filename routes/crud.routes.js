@@ -4,7 +4,6 @@
 
 const express = require('express');
 const router = express.Router();
-// const Controller = require('../controllers/crud.controller');
 const PageController = require('../controllers/page.controller');
 const PageContentController = require('../controllers/page-content.controller');
 const SupportSourceController = require('../controllers/support-source.controller');
