@@ -2,7 +2,6 @@
  * CRUD operations for SupportSource documents.
  */
 
-const getPageQuery = require('./getPageQuery').getPageQuery;
 const { PageModel, PageContentModel, SupportSourceModel } 
     = require('../models/Models');
 
@@ -12,7 +11,7 @@ const { PageModel, PageContentModel, SupportSourceModel }
  * req.params.id is the ID of the Page document.
  * req.params.pid is the ID of the PageContent document.
  */
-exports.createSupportSource = async (req, res) => {
+exports.createSupportSource = (req, res) => {
     if (
         req.body.sourceName === undefined ||
         req.params.id === undefined ||
@@ -23,7 +22,7 @@ exports.createSupportSource = async (req, res) => {
         });
     }
 
-    await getPageQuery(req.params.id).exec((err, doc) => {
+    PageModel.findById(req.params.id, (err, doc) => {
         if (err || !doc) {
             return res.status(500).send({
                 message: err ? err.message : 'Could not find Page with ID ' + req.params.id
@@ -64,7 +63,12 @@ exports.createSupportSource = async (req, res) => {
 
 }
 
-exports.deleteSupportSource = async (req, res) => {
+/**
+ * Delete a SupportSource document defined by the route parameter sid
+ * inside a PageContent document defined by the router parameter pid
+ * inside a Page document defined by the router parameter id.
+ */
+exports.deleteSupportSource = (req, res) => {
     if (
         req.params.sid === undefined ||
         req.params.id === undefined ||
@@ -73,7 +77,7 @@ exports.deleteSupportSource = async (req, res) => {
         return res.status(400).send({ message: 'Undefined request parameters' });
     }
 
-    await getPageQuery(req.params.id).exec((err, doc) => {
+    PageModel.findById(req.params.id, (err, doc) => {
         if (err || !doc) {
             return res.status(500).send({
                 message: err ? err.message : 'Could not find Page with ID ' + req.params.id
@@ -110,5 +114,54 @@ exports.deleteSupportSource = async (req, res) => {
             res.status(200).send(doc);
         });
 
+    });
+}
+
+/**
+ * Modify a SupportSource document defined by the route parameter sid
+ * inside a PageContent document defined by the router parameter pid
+ * inside a Page document defined by the router parameter id.
+ */
+exports.modifySupportSource = (req, res) => {
+    PageModel.findById(req.params.id, (err, doc) => {
+        if (err || !doc) {
+            return res.status(500).send({
+                message: err ? err.message : 'Could not find Page with ID ' + req.params.id
+            });
+        }
+
+        let supportSourceWasModified = false;
+
+        // Search loop for PageContent
+        for (let i = 0; i < doc.pageContent.length; i++) {
+            if (doc.pageContent[i]._id == req.params.pid) {
+                // Search loop for SupportSource
+                for (let j = 0; j < doc.pageContent[i].supportSources.length; j++) {
+                    if (doc.pageContent[i].supportSources[j]._id == req.params.sid) {
+                        doc.pageContent[i].supportSources[j].sourceName = !req.body.sourceName ? doc.pageContent[i].supportSources[j].sourceName : req.body.sourceName;
+                        doc.pageContent[i].supportSources[j].link = !req.body.link ? doc.pageContent[i].supportSources[j].link : req.body.link;
+                        doc.pageContent[i].supportSources[j].isOnline = !req.body.isOnline ? doc.pageContent[i].supportSources[j].isOnline : req.body.isOnline;
+                        doc.pageContent[i].supportSources[j].isInPerson = !req.body.isInPerson ? doc.pageContent[i].supportSources[j].isInPerson : req.body.isInPerson;
+                        doc.pageContent[i].supportSources[j].isInBuilding = !req.body.isInBuilding ? doc.pageContent[i].supportSources[j].isInBuilding : req.body.isInBuilding;
+                        supportSourceWasModified = true;
+                    }
+                    if (supportSourceWasModified) break;
+                }
+            }
+            if (supportSourceWasModified) break;
+        }
+
+        // If nothing was deleted, return a message
+        if (!supportSourceWasModified) {
+            return res.status(404).send({
+                message: 'Could not find SupportSource with ID ' + req.params.sid
+            });
+        }
+
+        // Save document
+        doc.save((err, doc) => {
+            if (err) res.status(500).send({ message: err.message });
+            res.status(200).send(doc);
+        });
     });
 }

@@ -2,7 +2,6 @@
  * CRUD operations for PageContent documents.
  */
 
-const getPageQuery = require('./getPageQuery').getPageQuery;
 const { PageModel, PageContentModel, SupportSourceModel } 
     = require('../models/Models');
 
@@ -12,7 +11,7 @@ const { PageModel, PageContentModel, SupportSourceModel }
  * The request parameter needs to be the ObjectID of the parent
  * document.
  */
-exports.createPageContent = async (req, res) => {
+exports.createPageContent = (req, res) => {
     if (
         req.body.name === undefined ||
         req.params.id === undefined
@@ -22,7 +21,7 @@ exports.createPageContent = async (req, res) => {
         });
     }
 
-    await getPageQuery(req.params.id).exec((err, doc) => {
+    PageModel.findById(req.params.id, (err, doc) => {
 
         if (err || !doc) {
             return res.status(500).send({
@@ -42,14 +41,13 @@ exports.createPageContent = async (req, res) => {
             res.status(200).send(doc);
         });
     });
-
 }
 
 /**
  * Delete a PageContent document defined by the route parameter pid
  * inside a Page document defined by the router parameter id.
  */
-exports.deletePageContent = async (req, res) => {
+exports.deletePageContent = (req, res) => {
     if (
         req.params.id === undefined || 
         req.params.pid === undefined
@@ -57,7 +55,7 @@ exports.deletePageContent = async (req, res) => {
         return res.status(400).send({ message: 'Undefined request parameters' });
     }
 
-    await getPageQuery(req.params.id).exec((err, doc) => {
+    PageModel.findById(req.params.id, (err, doc) => {
 
         if (err || !doc) {
             return res.status(500).send({
@@ -79,6 +77,44 @@ exports.deletePageContent = async (req, res) => {
 
         // If nothing was deleted, return a message
         if (!pageContentWasDeleted) {
+            return res.status(404).send({
+                message: 'Could not find PageContent with ID ' + req.params.pid
+            });
+        }
+
+        doc.save((err, doc) => {
+            if (err) res.status(500).send({ message: err.message });
+            res.status(200).send(doc);
+        });
+    });
+}
+
+/**
+ * Modify a PageContent document defined by the route parameter pid
+ * inside a Page document defined by the router parameter id.
+ */
+exports.modifyPageContent = (req, res) => {
+    PageModel.findById(req.params.id, (err, doc) => {
+        if (err || !doc) {
+            return res.status(500).send({
+                message: err ? err.message : 'Could not find Page with ID ' + req.params.id
+            });
+        }
+
+        // Boolean variable for checking if anything was modified
+        let pageContentWasModified = false;
+
+        // Find corresponding PageContent document and modify if exists
+        for (let i = 0; i < doc.pageContent.length; i++) {
+            if (doc.pageContent[i]._id == req.params.pid) {
+                doc.pageContent[i].name = req.body.name;
+                pageContentWasModified = true;
+                break;
+            }
+        }
+
+        // If nothing was deleted, return a message
+        if (!pageContentWasModified) {
             return res.status(404).send({
                 message: 'Could not find PageContent with ID ' + req.params.pid
             });

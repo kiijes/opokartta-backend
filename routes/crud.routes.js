@@ -23,11 +23,15 @@ router.put('/pages/:id', PageController.modifyPage);
 router.post('/pages/:id/page-contents', PageContentController.createPageContent);
 // Delete a PageContent
 router.delete('/pages/:id/page-contents/:pid', PageContentController.deletePageContent);
+// Modify a PageContent
+router.put('/pages/:id/page-contents/:pid', PageContentController.modifyPageContent);
 
 // SUPPORTSOURCE ROUTES
 // Create a new SupportSource inside a PageContent
 router.post('/pages/:id/page-contents/:pid', SupportSourceController.createSupportSource);
 // Delete a SupportSource
 router.delete('/pages/:id/page-contents/:pid/support-sources/:sid', SupportSourceController.deleteSupportSource);
+// Modify a SupportSource
+router.put('/pages/:id/page-contents/:pid/support-sources/:sid', SupportSourceController.modifySupportSource);
 
 module.exports = router;
