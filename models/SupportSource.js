@@ -14,20 +14,9 @@ const SupportSourceSchema = new mongoose.Schema({
         required: true
     },
     description: String,
-    link: String,
+    link: [String],
     phone: String,
-    isOnline: {
-        type: Boolean,
-        default: false
-    },
-    isInPerson: {
-        type: Boolean,
-        default: false
-    },
-    isInBuilding: {
-        type: Boolean,
-        default: false
-    }
+    icon: [String]
 });
 
 module.exports = SupportSourceSchema;

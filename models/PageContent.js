@@ -14,6 +14,7 @@ const PageContentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    descriptionTitle: String,
     supportSources: [SupportSourceSchema]
 });
 
