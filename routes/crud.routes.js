@@ -11,6 +11,8 @@ const SupportSourceController = require('../controllers/support-source.controlle
 // PAGE ROUTES
 // Get all the Pages
 router.get('/pages', PageController.getAllPages);
+// Get a single Page
+router.get('/pages/:id', PageController.getPageWithId);
 // Create a new Page
 router.post('/pages', PageController.createPage);
 // Delete a Page

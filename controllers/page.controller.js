@@ -11,6 +11,13 @@ exports.getAllPages = (req, res) => {
         .catch(err => res.status(500).send({message: err.message}));
 };
 
+// Get a page with ID
+exports.getPageWithId = (req, res) => {
+    PageModel.find({ _id: req.params.id })
+        .then(doc => res.status(200).send(doc))
+        .catch(err => res.status(500).send({message: err.message}));
+}
+
 /**
  * Create a new Page document.
  * The request body should be JSON and have a "pageName" field.
