@@ -7,6 +7,7 @@ const router = express.Router();
 const PageController = require('../controllers/page.controller');
 const PageContentController = require('../controllers/page-content.controller');
 const SupportSourceController = require('../controllers/support-source.controller');
+const AuthController = require('../controllers/auth.controller');
 
 // PAGE ROUTES
 // Get all the Pages
@@ -14,26 +15,26 @@ router.get('/pages', PageController.getAllPages);
 // Get a single Page
 router.get('/pages/:id', PageController.getPageWithId);
 // Create a new Page
-router.post('/pages', PageController.createPage);
+router.post('/pages', AuthController.verifyToken, PageController.createPage);
 // Delete a Page
-router.delete('/pages/:id', PageController.deletePage);
+router.delete('/pages/:id', AuthController.verifyToken, PageController.deletePage);
 // Modify a Page
-router.put('/pages/:id', PageController.modifyPage);
+router.put('/pages/:id', AuthController.verifyToken, PageController.modifyPage);
 
 // PAGECONTENT ROUTES
 // Create a new PageContent inside a Page
-router.post('/pages/:id/page-contents', PageContentController.createPageContent);
+router.post('/pages/:id/page-contents', AuthController.verifyToken, PageContentController.createPageContent);
 // Delete a PageContent
-router.delete('/pages/:id/page-contents/:pid', PageContentController.deletePageContent);
+router.delete('/pages/:id/page-contents/:pid', AuthController.verifyToken, PageContentController.deletePageContent);
 // Modify a PageContent
-router.put('/pages/:id/page-contents/:pid', PageContentController.modifyPageContent);
+router.put('/pages/:id/page-contents/:pid', AuthController.verifyToken, PageContentController.modifyPageContent);
 
 // SUPPORTSOURCE ROUTES
 // Create a new SupportSource inside a PageContent
-router.post('/pages/:id/page-contents/:pid', SupportSourceController.createSupportSource);
+router.post('/pages/:id/page-contents/:pid', AuthController.verifyToken, SupportSourceController.createSupportSource);
 // Delete a SupportSource
-router.delete('/pages/:id/page-contents/:pid/support-sources/:sid', SupportSourceController.deleteSupportSource);
+router.delete('/pages/:id/page-contents/:pid/support-sources/:sid', AuthController.verifyToken, SupportSourceController.deleteSupportSource);
 // Modify a SupportSource
-router.put('/pages/:id/page-contents/:pid/support-sources/:sid', SupportSourceController.modifySupportSource);
+router.put('/pages/:id/page-contents/:pid/support-sources/:sid', AuthController.verifyToken, SupportSourceController.modifySupportSource);
 
 module.exports = router;

@@ -5,6 +5,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const crud = require('./routes/crud.routes');
+const auth = require('./routes/auth.routes');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
@@ -27,6 +28,7 @@ app.use(bodyParser.json());
 const port = process.env.PORT || 3000;
 
 app.use('/api/v1', crud);
+app.use('/api/v1', auth);
 app.get('/', (req, res) => {
     res.send('<p>Opokartta REST API</p>');
 });
