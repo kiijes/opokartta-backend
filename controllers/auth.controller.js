@@ -108,3 +108,7 @@ exports.verifyToken = (req, res, next) => {
         next();
     });
 }
+
+exports.grantAccess = (req, res) => {
+    return res.status(200).send(true);
+}

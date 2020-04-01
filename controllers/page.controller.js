@@ -11,6 +11,15 @@ exports.getAllPages = (req, res) => {
         .catch(err => res.status(500).send({message: err.message}));
 };
 
+// Get and return all the Page documents without their subdocuments.
+// For use in the administrative application.
+exports.getAllPagesWithNoSubdocuments = (req, res) => {
+    PageModel.find({}, '_id pageName subtitle')
+        .then(doc => res.status(200).send(doc))
+        .catch(err => res.status(500).send({message: err.message}));
+};
+
+
 // Get a page with ID
 exports.getPageWithId = (req, res) => {
     PageModel.find({ _id: req.params.id })

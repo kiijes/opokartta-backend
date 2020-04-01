@@ -12,6 +12,8 @@ const AuthController = require('../controllers/auth.controller');
 // PAGE ROUTES
 // Get all the Pages
 router.get('/pages', PageController.getAllPages);
+// Get all the Pages with no subdocuments
+router.get('/pages-nosub', PageController.getAllPagesWithNoSubdocuments);
 // Get a single Page
 router.get('/pages/:id', PageController.getPageWithId);
 // Create a new Page
