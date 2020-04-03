@@ -4,6 +4,33 @@
 
 const { PageModel, PageContentModel } = require('../models/Models');
 
+exports.getPageContent = (req, res) => {
+    if (
+        req.params.id === undefined || 
+        req.params.pid === undefined
+    ) { 
+        return res.status(400).send({ message: 'Undefined request parameters' });
+    }
+
+    PageModel.findById(req.params.id, (err, doc) => {
+        if (err || !doc) {
+            return res.status(err ? 500 : 404).send({
+                message: err ? err.message : 'Could not find Page with ID ' + req.params.id
+            });
+        }
+
+        for (let i = 0; i < doc.pageContent.length; i++) {
+            if (doc.pageContent[i]._id == req.params.pid) {
+                return res.status(200).send(doc.pageContent[i]);
+            }
+        }
+
+        return res.status(404).send({
+            message: 'Could not find PageContent with ID ' + req.params.pid
+        });
+    });
+}
+
 /**
  * Create a new PageContent document into a Page document.
  * The request body should be JSON and have a "name" field.
@@ -30,6 +57,7 @@ exports.createPageContent = (req, res) => {
 
         let pageContent = new PageContentModel({
             name: req.body.name,
+            descriptionTitle: !req.body.descriptionTitle ? null : req.body.descriptionTitle,
             supportSources: []
         });
 
@@ -107,6 +135,7 @@ exports.modifyPageContent = (req, res) => {
         for (let i = 0; i < doc.pageContent.length; i++) {
             if (doc.pageContent[i]._id == req.params.pid) {
                 doc.pageContent[i].name = req.body.name;
+                doc.pageContent[i].descriptionTitle = !req.body.descriptionTitle ? doc.pageContent[i].descriptionTitle : req.body.descriptionTitle;
                 pageContentWasModified = true;
                 break;
             }

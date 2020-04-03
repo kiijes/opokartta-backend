@@ -24,6 +24,8 @@ router.delete('/pages/:id', AuthController.verifyToken, PageController.deletePag
 router.put('/pages/:id', AuthController.verifyToken, PageController.modifyPage);
 
 // PAGECONTENT ROUTES
+// Get a PageContent
+router.get('/pages/:id/page-contents/:pid', PageContentController.getPageContent);
 // Create a new PageContent inside a Page
 router.post('/pages/:id/page-contents', AuthController.verifyToken, PageContentController.createPageContent);
 // Delete a PageContent

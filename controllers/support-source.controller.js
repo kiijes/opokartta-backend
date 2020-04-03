@@ -39,9 +39,7 @@ exports.createSupportSource = (req, res) => {
                     description: req.body.description,
                     link: req.body.link,
                     phone: req.body.phone,
-                    isOnline: req.body.isOnline,
-                    isInPerson: req.body.isInPerson,
-                    isInBuilding: req.body.isInBuilding
+                    icon: req.body.icon
                 });
 
                 doc.pageContent[i].supportSources.push(supportSource);
@@ -143,9 +141,7 @@ exports.modifySupportSource = (req, res) => {
                         doc.pageContent[i].supportSources[j].description = !req.body.description ? doc.pageContent[i].supportSources[j].description : req.body.description;
                         doc.pageContent[i].supportSources[j].link = !req.body.link ? doc.pageContent[i].supportSources[j].link : req.body.link;
                         doc.pageContent[i].supportSources[j].phone = !req.body.phone ? doc.pageContent[i].supportSources[j].phone : req.body.phone;
-                        doc.pageContent[i].supportSources[j].isOnline = !req.body.isOnline ? doc.pageContent[i].supportSources[j].isOnline : req.body.isOnline;
-                        doc.pageContent[i].supportSources[j].isInPerson = !req.body.isInPerson ? doc.pageContent[i].supportSources[j].isInPerson : req.body.isInPerson;
-                        doc.pageContent[i].supportSources[j].isInBuilding = !req.body.isInBuilding ? doc.pageContent[i].supportSources[j].isInBuilding : req.body.isInBuilding;
+                        doc.pageContent[i].supportSources[j].icon = !req.body.icon ? doc.pageContent[i].supportSources[j].icon : req.body.icon;
                         supportSourceWasModified = true;
                     }
                     if (supportSourceWasModified) break;
