@@ -82,11 +82,10 @@ exports.modifyPage = (req, res) => {
         }
 
         doc.pageName = !req.body.pageName ? doc.pageName : req.body.pageName;
-        doc.subtitle = !req.body.subtitle ? 
-            (!doc.subtitle ? null : doc.subtitle) : req.body.subtitle;
+        doc.subtitle = !req.body.subtitle ? null : req.body.subtitle;
         doc.save((err, doc) => {
             if (err) res.status(500).send({ message: err.message });
-            res.status(200).send(doc);
+            res.status(200).send({ pageName: doc.pageName, subtitle: doc.subtitle });
         });
     });
 }
