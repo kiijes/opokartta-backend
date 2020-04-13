@@ -65,7 +65,7 @@ exports.createPageContent = (req, res) => {
 
         doc.save((err, doc) => {
             if (err) res.status(500).send({ message: err.message });
-            res.status(200).send(doc);
+            res.status(200).send({ name: req.body.name, descriptionTitle: req.body.descriptionTitle });
         });
     });
 }
@@ -111,7 +111,9 @@ exports.deletePageContent = (req, res) => {
 
         doc.save((err, doc) => {
             if (err) res.status(500).send({ message: err.message });
-            res.status(200).send(doc);
+            res.status(200).send({
+                message: 'PageContent id ' + req.params.pid + ' deleted'
+            });
         });
     });
 }
@@ -135,7 +137,7 @@ exports.modifyPageContent = (req, res) => {
         for (let i = 0; i < doc.pageContent.length; i++) {
             if (doc.pageContent[i]._id == req.params.pid) {
                 doc.pageContent[i].name = req.body.name;
-                doc.pageContent[i].descriptionTitle = !req.body.descriptionTitle ? doc.pageContent[i].descriptionTitle : req.body.descriptionTitle;
+                doc.pageContent[i].descriptionTitle = !req.body.descriptionTitle ? null : req.body.descriptionTitle;
                 pageContentWasModified = true;
                 break;
             }
@@ -150,7 +152,7 @@ exports.modifyPageContent = (req, res) => {
 
         doc.save((err, doc) => {
             if (err) res.status(500).send({ message: err.message });
-            res.status(200).send(doc);
+            res.status(200).send({ message: 'PageContent modified successfully' });
         });
     });
 }
