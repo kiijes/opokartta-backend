@@ -8,9 +8,10 @@ const crud = require('./routes/crud.routes');
 const auth = require('./routes/auth.routes');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const config = require('./config/db.config');
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/opokartta', {
+mongoose.connect(`mongodb://${config.host}:${config.port}/${config.db}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
