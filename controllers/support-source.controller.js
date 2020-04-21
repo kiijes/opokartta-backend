@@ -138,10 +138,10 @@ exports.modifySupportSource = (req, res) => {
                 for (let j = 0; j < doc.pageContent[i].supportSources.length; j++) {
                     if (doc.pageContent[i].supportSources[j]._id == req.params.sid) {
                         doc.pageContent[i].supportSources[j].sourceName = !req.body.sourceName ? doc.pageContent[i].supportSources[j].sourceName : req.body.sourceName;
-                        doc.pageContent[i].supportSources[j].description = !req.body.description ? doc.pageContent[i].supportSources[j].description : req.body.description;
-                        doc.pageContent[i].supportSources[j].link = !req.body.link ? doc.pageContent[i].supportSources[j].link : req.body.link;
-                        doc.pageContent[i].supportSources[j].phone = !req.body.phone ? doc.pageContent[i].supportSources[j].phone : req.body.phone;
-                        doc.pageContent[i].supportSources[j].icon = !req.body.icon ? doc.pageContent[i].supportSources[j].icon : req.body.icon;
+                        doc.pageContent[i].supportSources[j].description = !req.body.description ? null : req.body.description;
+                        doc.pageContent[i].supportSources[j].link = !req.body.link ? [] : req.body.link;
+                        doc.pageContent[i].supportSources[j].phone = !req.body.phone ? null : req.body.phone;
+                        doc.pageContent[i].supportSources[j].icon = !req.body.icon ? [] : req.body.icon;
                         supportSourceWasModified = true;
                     }
                     if (supportSourceWasModified) break;
