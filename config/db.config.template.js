@@ -7,5 +7,6 @@ module.exports = {
     port: '',
     db: '',
     user: '',
-    pass: ''
+    pass: '',
+    authDb: ''
 }

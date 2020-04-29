@@ -11,7 +11,7 @@ const cors = require('cors');
 const config = require('./config/db.config');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://${config.host}:${config.port}/${config.db}`, {
+mongoose.connect(`mongodb://${config.user}:${config.pass}@${config.host}:${config.port}/${config.db}?authSource=${config.authDb}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
