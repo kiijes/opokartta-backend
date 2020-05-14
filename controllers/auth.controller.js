@@ -3,6 +3,11 @@ const { UserModel } = require('../models/Models');
 const bcrypt  = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+/**
+ * User registration function.
+ * Consider turning this 'off' later in production
+ * by commenting it, removing it, etc.
+ */
 exports.signUp = (req, res) => {
     if (req.body.username === undefined || 
         req.body.password === undefined) {
@@ -37,6 +42,10 @@ exports.signUp = (req, res) => {
     });
 }
 
+/**
+ * Middleware for authorizing user registration. Consider turning this 'off'
+ * later in production by commenting it, removing it, etc.
+ */
 exports.authorizeSignup = (req, res, next) => {
     if (req.headers.user == config.user && req.headers.pass == config.pass) {
         return next();

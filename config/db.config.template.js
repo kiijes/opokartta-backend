@@ -3,10 +3,10 @@
  * database connection info.
  */
 module.exports = {
-    host: '',
-    port: '',
-    db: '',
-    user: '',
-    pass: '',
-    authDb: ''
+    host: '', // IP/URL of database host
+    port: '', // Database connection port
+    db: '', // Name of the application database
+    user: '', // Username of database user
+    pass: '', // Password of database user
+    authDb: '' // Name of authentication database
 }
