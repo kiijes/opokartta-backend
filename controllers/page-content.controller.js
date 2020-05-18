@@ -156,3 +156,52 @@ exports.modifyPageContent = (req, res) => {
         });
     });
 }
+
+exports.moveElementInArray = async (req, res) => {
+    let pageContentWasFound = false;
+    let pageContentWasMoved = false;
+
+    const doc = await PageModel.findById(req.params.id);
+    for (let i = 0; i < doc.pageContent.length; i++) {
+        if (doc.pageContent[i]._id == req.params.pid) {
+            pageContentWasFound = true;
+
+            if (req.body.move == 'up' && i > 0) {
+                var tmp = doc.pageContent[i-1];
+                doc.pageContent[i-1] = doc.pageContent[i];
+                doc.pageContent[i] = tmp;
+                pageContentWasMoved = true;
+                break;
+            }
+
+            if (req.body.move == 'down' && i < doc.pageContent.length-1) {
+                var tmp = doc.pageContent[i+1];
+                doc.pageContent[i+1] = doc.pageContent[i];
+                doc.pageContent[i] = tmp;
+                pageContentWasMoved = true;
+                break;
+            }
+        }
+    }
+
+    if (!pageContentWasFound) {
+        return res.status(404).send({
+            message: 'Could not find PageContent with ID ' + req.params.pid
+        });
+    } else if (!pageContentWasMoved) {
+        return res.status(500).send({
+            message: 'Could not move PageContent with ID ' + req.params.pid + ' ' + req.body.move
+        });
+    }
+
+    const response = await PageModel.updateOne({ _id: req.params.id }, { pageContent: doc.pageContent });
+    if (response.nModified === 1) {
+        return res.status(200).send({
+            message: 'Moved PageContent with ID ' + req.params.pid + ' ' + req.body.move
+        });
+    } else {
+        return res.status(500).send({
+            message: 'An unknown error occurred when moving PageContent with ID ' + req.params.pid + ' ' + req.body.move
+        });
+    }
+}

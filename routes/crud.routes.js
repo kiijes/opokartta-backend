@@ -32,6 +32,8 @@ router.post('/pages/:id/page-contents', AuthController.verifyToken, PageContentC
 router.delete('/pages/:id/page-contents/:pid', AuthController.verifyToken, PageContentController.deletePageContent);
 // Modify a PageContent
 router.put('/pages/:id/page-contents/:pid', AuthController.verifyToken, PageContentController.modifyPageContent);
+// Move a PageContent element in array
+router.put('/pages/:id/page-contents/:pid/move', AuthController.verifyToken, PageContentController.moveElementInArray);
 
 // SUPPORTSOURCE ROUTES
 // Create a new SupportSource inside a PageContent
