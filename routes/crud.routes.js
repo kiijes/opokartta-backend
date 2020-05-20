@@ -42,5 +42,7 @@ router.post('/pages/:id/page-contents/:pid', AuthController.verifyToken, Support
 router.delete('/pages/:id/page-contents/:pid/support-sources/:sid', AuthController.verifyToken, SupportSourceController.deleteSupportSource);
 // Modify a SupportSource
 router.put('/pages/:id/page-contents/:pid/support-sources/:sid', AuthController.verifyToken, SupportSourceController.modifySupportSource);
+// Move a SupportSource element in array
+router.put('/pages/:id/page-contents/:pid/support-sources/:sid/move', AuthController.verifyToken, SupportSourceController.moveElementInArray);
 
 module.exports = router;

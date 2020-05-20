@@ -164,3 +164,85 @@ exports.modifySupportSource = (req, res) => {
         });
     });
 }
+
+/**
+ * Move a SupportSource document up or down in the array.
+ * 
+ * Note: refer to the note of PageContentController's
+ * moveElementInArray function for a quick rundown on
+ * how this function works and why it's crude.
+ */
+exports.moveElementInArray = async (req, res) => {
+    let pageContentWasFound = false;
+    let supportSourceWasFound = false;
+    let supportSourceWasMoved = false;
+    let pageContentIndex;
+
+    // fetch the Page document that has to be modified
+    const doc = await PageModel.findById(req.params.id);
+
+    // Go through PageContent document array
+    for (let i = 0; i < doc.pageContent.length; i++) {
+        if (doc.pageContent[i]._id == req.params.pid) {
+            pageContentWasFound = true;
+            pageContentIndex = i;
+            // Go through SupportSource document array
+            for (let j = 0; j < doc.pageContent[i].supportSources.length; j++) {
+                if (doc.pageContent[i].supportSources[j]._id == req.params.sid) {
+                    supportSourceWasFound = true;
+
+                    if (req.body.move == 'up' && j > 0) {
+                        var tmp = doc.pageContent[i].supportSources[j-1];
+                        doc.pageContent[i].supportSources[j-1] = doc.pageContent[i].supportSources[j];
+                        doc.pageContent[i].supportSources[j] = tmp;
+                        supportSourceWasMoved = true;
+                        break;
+                    }
+
+                    if (req.body.move == 'down' && j < doc.pageContent[i].supportSources.length-1) {
+                        var tmp = doc.pageContent[i].supportSources[j+1];
+                        doc.pageContent[i].supportSources[j+1] = doc.pageContent[i].supportSources[j];
+                        doc.pageContent[i].supportSources[j] = tmp;
+                        supportSourceWasMoved = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // Checks and returns if a document was not found or moved
+    if (!pageContentWasFound) {
+        return res.status(404).send({
+            message: 'Could not find PageContent with ID ' + req.params.pid
+        });
+    }
+    if (!supportSourceWasFound) {
+        return res.status(404).send({
+            message: 'Could not find SupportSource with ID ' + req.params.sid
+        });
+    }
+    if (!supportSourceWasMoved) {
+        return res.status(500).send({
+            message: 'Could not move SupportSource with ID ' + req.params.sid + ' ' + req.body.move
+        });
+    }
+
+    // Update happens here, response includes info on
+    // whether anything was modified or not
+    const response = await PageModel.updateOne(
+        { _id: req.params.id },
+        { pageContent: doc.pageContent }
+    );
+
+    // If a document was modified, return OK, otherwise return an error
+    if (response.nModified === 1) {
+        return res.status(200).send({
+            message: 'Moved SupportSource with ID ' + req.params.sid + ' ' + req.body.move
+        });
+    } else {
+        return res.status(500).send({
+            message: 'An unknown error occurred when moving SupportSource with ID ' + req.params.sid + ' ' + req.body.move
+        });
+    }
+}
