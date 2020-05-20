@@ -157,11 +157,31 @@ exports.modifyPageContent = (req, res) => {
     });
 }
 
+/**
+ * Move a PageContent document up or down in the array.
+ * 
+ * Note: the function operates very crudely by fetching
+ * the Page document, making the change in the array of
+ * the fetched document, and then calling an update action
+ * that replaces the whole PageContent subdocument array
+ * with the modified one. MongoDB doesn't allow more than
+ * one operation on one attribute in one save, so if this
+ * were to be made into a less crude method, you would have
+ * to first fetch the document, save the PageContent document
+ * to be moved into a variable before pulling it from the
+ * array and saving that, and then pushing it in another
+ * action to its correct position and saving that. Due to
+ * the nature of this program, this "bruteforce" method
+ * works just fine.
+ */
 exports.moveElementInArray = async (req, res) => {
     let pageContentWasFound = false;
     let pageContentWasMoved = false;
 
+    // Fetch the Page document
     const doc = await PageModel.findById(req.params.id);
+    // Find the PageContent document from the array
+    // and move it up or down
     for (let i = 0; i < doc.pageContent.length; i++) {
         if (doc.pageContent[i]._id == req.params.pid) {
             pageContentWasFound = true;
@@ -184,6 +204,7 @@ exports.moveElementInArray = async (req, res) => {
         }
     }
 
+    // If nothing was found or moved, return a response about it
     if (!pageContentWasFound) {
         return res.status(404).send({
             message: 'Could not find PageContent with ID ' + req.params.pid
@@ -194,7 +215,11 @@ exports.moveElementInArray = async (req, res) => {
         });
     }
 
+    // If something was done, update the wanted Page document by
+    // replacing the original pageContent array with the modified one
     const response = await PageModel.updateOne({ _id: req.params.id }, { pageContent: doc.pageContent });
+
+    // If a document was modified, return OK, otherwise return an error
     if (response.nModified === 1) {
         return res.status(200).send({
             message: 'Moved PageContent with ID ' + req.params.pid + ' ' + req.body.move
