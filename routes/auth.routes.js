@@ -17,9 +17,6 @@ router.post('/user/signup', AuthController.authorizeSignup, AuthController.signU
 // LOGIN
 router.post('/user/signin', AuthController.signIn);
 
-// TOKEN VERIFICATION TESTING
-router.get('/user/tokentest', AuthController.verifyToken);
-
 // GRANT ACCESS
 router.get('/user/auth', AuthController.verifyToken, AuthController.grantAccess);
 
