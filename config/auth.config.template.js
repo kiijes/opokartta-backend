@@ -4,8 +4,10 @@
  */
 
 module.exports = {
-    secret: 'SOME_SECRET_KEY', // String: used for JWT
+    secret: 'SOME_SECRET_KEY', // String: used for JWT secret
     saltRounds: 10, // Integer: Amount of rounds for password salting
-    user: '', // String: Username for authorizing signup
-    pass: '' // String: Password for authorizing signup
+    user: '', // String: Username for user account. Also used to auth signup via req headers!
+    pass: '', // String: Password for user account. Also used to auth signup via req headers!
+    host: '', // IP/hostname of host
+    port: '' // Port the backend is running on
 }
