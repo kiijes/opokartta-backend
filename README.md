@@ -31,3 +31,5 @@ Backend opokarttasovellukseen.
 5. Nimeä *.config.template.js-nimiset tiedostot *.config.js, eli poista template-osio. Esim. auth.config.template.js -> auth.config.js
 6. Lisää db.configiin ja auth.configiin tarvittavat tiedot.
 7. Käynnistä sovellus ajamalla index.js komennolla `node index.js` (tai jollain haluamallasi monitorointiskriptillä tms. esim. nodemon).
+8. Scripts-kansiossa olevilla populate- ja register-skripteillä voi populoida tietokannan ja rekisteröidä sovellukselle käyttäjän.
+9. Kommentoi käyttäjän rekisteröinnin jälkeen auth.routes.js-tiedostosta /user/signup-reitti ja auth.controller.js-tiedostosta signUp- ja authorizeSignup-funktiot.
