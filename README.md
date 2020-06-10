@@ -2,6 +2,8 @@
 
 Backend opokarttasovellukseen.
 
+HUOM! HTTPS-yhteydellä toimiva versio on omassa branchissaan ('https').
+
 ## Mitä tarvitaan
 
 - Node.js + npm
